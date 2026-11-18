@@ -1,0 +1,63 @@
+# Kconfig settings for the Ingenic X2600 co-processor (RISC-V, IPC transport)
+#
+# The main motion MCU on the Creality K1 is a RISC-V co-processor embedded in
+# the X2600 SoC. The host (X2600 main core) loads this firmware into the
+# co-processor's SRAM via the bootloader and talks to it over shared-memory
+# ring buffers + a doorbell IRQ (soc_mcu.ko). Console messages use the standard
+# Klipper 0x7E/CRC16 framing carried over those rings.
+
+if MACH_X2600IPC
+
+config X2600IPC_SELECT
+    bool
+    default y
+    select HAVE_GPIO
+    select HAVE_GPIO_ADC
+    select HAVE_STRICT_TIMING
+    select HAVE_STEPPER_OPTIMIZED_BOTH_EDGE
+    select HAVE_LIMITED_CODE_SIZE
+
+config BOARD_DIRECTORY
+    string
+    default "x2600ipc"
+
+config MCU
+    string
+    default "x2600ipc"
+
+# Co-processor runs from its own clock; Klipper uses it for timing.
+config CLOCK_FREQ
+    int
+    default 300000000
+
+# SRAM layout (from the stock klipper_main_ipc.bin header):
+#   text  at 0x0FF20000 (this image, up to ~192KiB)
+#   bss   at 0x0FF4A000
+#   data  at 0x12B24030, stack top 0x12B267B0
+# We keep text in the 0x0FF2xxxx region and data/bss in the 0x12B2xxxx region.
+config FLASH_APPLICATION_ADDRESS
+    hex
+    default 0x0FF20000
+
+config FLASH_SIZE
+    int
+    default 0x30000   # 192KiB of co-processor code SRAM
+
+config RAM_START
+    hex
+    default 0x12B24000
+
+config RAM_SIZE
+    int
+    default 0x8000    # 32KiB co-processor SRAM (data + bss + stack)
+
+config STACK_SIZE
+    int
+    default 1024
+
+# IPC transport is always on for this arch (no UART console).
+config X2600IPC_CONSOLE
+    bool
+    default y
+
+endif

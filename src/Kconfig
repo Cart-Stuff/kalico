@@ -30,6 +30,8 @@ choice
         bool "Allwinner A64 AR100"
     config MACH_CH32V
         bool "WCH CH32V (RISC-V)"
+    config MACH_X2600IPC
+        bool "Ingenic X2600 co-processor (RISC-V IPC)"
     config MACH_LINUX
         bool "Linux process"
     config MACH_SIMU
@@ -46,6 +48,7 @@ source "src/rp2040/Kconfig"
 source "src/pru/Kconfig"
 source "src/ar100/Kconfig"
 source "src/ch32v/Kconfig"
+source "src/x2600ipc/Kconfig"
 source "src/linux/Kconfig"
 source "src/simulator/Kconfig"
 
