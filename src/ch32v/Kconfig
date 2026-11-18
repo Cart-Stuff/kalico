@@ -1,0 +1,75 @@
+# Kconfig settings for WCH CH32V (QingKe RISC-V) processors
+#
+# The CH32V peripherals (RCC, GPIO, USART, TIM, ADC) are register-compatible
+# with the STM32F1 map; the CPU core is QingKe RISC-V with a PFIC interrupt
+# controller. Used on the Creality K1 nozzle and bed-leveling MCUs.
+
+if MACH_CH32V
+
+config CH32V_SELECT
+    bool
+    default y
+    select HAVE_GPIO
+    select HAVE_GPIO_ADC
+    select HAVE_STRICT_TIMING
+    select HAVE_STEPPER_OPTIMIZED_BOTH_EDGE
+    select HAVE_LIMITED_CODE_SIZE
+    # HAVE_GPIO_SPI and HAVE_GPIO_HARD_PWM are not yet implemented for CH32V;
+    # software PWM (gpiocmds) covers fans/heaters, and software SPI is available
+    # via CONFIG_WANT_SOFTWARE_SPI if a display/sensor needs it.
+
+config BOARD_DIRECTORY
+    string
+    default "ch32v"
+
+choice
+    prompt "Processor model"
+    config MACH_CH32V103
+        bool "CH32V103"
+    config MACH_CH32V203
+        bool "CH32V203"
+endchoice
+
+config MCU
+    string
+    default "ch32v103" if MACH_CH32V103
+    default "ch32v203" if MACH_CH32V203
+
+# CH32V103: 8MHz HSE -> PLL x9 = 72MHz (max 80). CH32V203: up to 144MHz.
+config CLOCK_FREQ
+    int
+    default 72000000 if MACH_CH32V103
+    default 144000000 if MACH_CH32V203
+
+config FLASH_SIZE
+    int
+    default 0x10000 if MACH_CH32V103   # 64KiB
+    default 0x40000 if MACH_CH32V203    # 256KiB (128KiB on some variants)
+
+config RAM_SIZE
+    int
+    default 0x5000 if MACH_CH32V103     # 20KiB
+    default 0x10000 if MACH_CH32V203    # 64KiB
+
+# CH32V code flash is memory-mapped at 0x00000000; RAM at 0x20000000.
+config FLASH_APPLICATION_ADDRESS
+    hex
+    default 0x00000000
+
+config RAM_START
+    hex
+    default 0x20000000
+
+config STACK_SIZE
+    int
+    default 1024
+
+# Serial console: nozzle uses USART1 (PA9/PA10) on the K1 harness.
+config CH32V_SERIAL_USART1
+    bool
+    default y
+config SERIAL
+    bool
+    default y
+
+endif
