@@ -61,34 +61,14 @@ CONFIG_NEED_SOS_FILTER=y
 
 #
 # Feature Configuration
-#
-
-#
 # Microcontroller interfaces
-#
 # CONFIG_WANT_GPIO_BUTTONS is not set
-
-#
 # ----
-#
-
-#
 # LCD chips
-#
-
-#
 # Accelerometer chips
-#
-
-#
 # External ADC type chips
-#
-
-#
 # Compiler options
-#
 # end of Feature Configuration
-
 CONFIG_CANBUS_FREQUENCY=1000000
 CONFIG_INLINE_STEPPER_HACK=y
 CONFIG_HAVE_STEPPER_OPTIMIZED_BOTH_EDGE=y
